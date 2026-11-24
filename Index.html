@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6b4f">
+<title>میرے کاروبار کے ملازمین</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f3;--ink:#16261f;--mute:#5b6b63;--line:#cfd9d3;--card:#fff;--g:#0f6b4f;--amber:#a86a00;--red:#b3261e;--sb:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root{--bg:#101a15;--ink:#e6efe9;--mute:#9db0a5;--line:#2a3b32;--card:#17251d;--g:#47b58f;--amber:#e0a43b;--red:#f08a80}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.8;padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
+h1{font-size:20px;margin:0;font-weight:700}
+h2{font-size:18px;margin:18px 0 6px;font-weight:700}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;border-radius:10px;padding:8px 16px;background:var(--g);color:#fff;font-weight:600}
+button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line)}
+button.no{background:transparent;color:var(--red);border:1px solid var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+label{display:block;margin:10px 0 2px;color:var(--mute);font-size:15px}
+.loginbox{max-width:380px;margin:12vh auto 0;padding:0 20px}
+.loginbox button{width:100%;margin-top:18px;padding:11px}
+.sub{color:var(--mute);margin:2px 0 12px}
+.err{color:var(--red);min-height:1.8em}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.note{margin:10px 16px 0;padding:8px 12px;border-inline-start:4px solid var(--amber);background:var(--card);font-size:15px;color:var(--mute)}
+main{padding:4px 16px calc(84px + var(--sb))}
+nav{position:fixed;bottom:0;inset-inline:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:var(--sb)}
+nav button{flex:1;background:transparent;color:var(--mute);border-radius:0;padding:10px 2px;font-size:15px;position:relative}
+nav button.on{color:var(--g);box-shadow:inset 0 3px 0 var(--g)}
+.b{background:var(--red);color:#fff;border-radius:99px;font-size:12px;padding:0 6px;margin-inline-start:4px}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.row small,.meta{color:var(--mute);font-size:14px}
+.tag{display:inline-block;padding:0 10px;border-radius:99px;font-size:13px;border:1px solid var(--line);color:var(--mute)}
+.tag.warn{color:var(--amber);border-color:var(--amber)}.tag.ok{color:var(--g);border-color:var(--g)}.tag.bad{color:var(--red);border-color:var(--red)}
+.mgr{padding:12px 14px;background:var(--g);color:#fff;border-radius:14px;margin-top:12px}
+.mgr small{color:#d8efe6}
+.kids{margin:0 22px 0 0;border-inline-start:2px solid var(--line);padding-inline-start:0}
+.kid{position:relative;padding:10px 18px 10px 0;margin-inline-start:0}
+.kid::before{content:"";position:absolute;inset-inline-start:0;top:26px;width:14px;border-top:2px solid var(--line)}
+.kid{padding-inline-start:20px}
+.acts{display:flex;gap:8px;margin-top:6px}
+.empty{color:var(--mute);padding:18px 0}
+.ok-msg{color:var(--g)}
+</style>
+</head>
+<body>
+<section id="login" hidden>
+  <div class="loginbox">
+    <h1>میرے کاروبار کے ملازمین</h1>
+    <p class="sub">صرف مالک کے لیے لاگ اِن</p>
+    <label for="em">ای میل</label><input id="em" type="email" autocomplete="username" inputmode="email">
+    <label for="pw">پاس ورڈ</label><input id="pw" type="password" autocomplete="current-password">
+    <button id="go">لاگ اِن کریں</button>
+    <p id="lerr" class="err" role="alert"></p>
+  </div>
+</section>
+
+<section id="app" hidden>
+  <header><h1>میرے کاروبار کے ملازمین</h1><button id="out" class="ghost">باہر نکلیں</button></header>
+  <p class="note">ملازم ابھی صرف ڈیٹابیس میں درج ہیں۔ AI سے جوڑنا اگلا مرحلہ ہے، اس لیے کام خود نہیں چلتے۔ منظوری کا بٹن صرف آپ کا فیصلہ درج کرتا ہے۔</p>
+  <main id="view"></main>
+  <nav id="nav">
+    <button data-t="emp">ملازمین</button>
+    <button data-t="task">کام</button>
+    <button data-t="appr">منظوریاں <span id="bd" class="b" hidden></span></button>
+    <button data-t="note">اطلاعات</button>
+  </nav>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = "https://ehydrtwnwfxcrxdfhjpl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9U1GPjWpSDJYPIC31a11ww_KB4uZaIN";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = d => d ? new Date(d).toLocaleDateString("ur-PK", {day:"numeric", month:"short"}) : "";
+
+const DUTY = {
+  "Business Manager":"تمام ملازمین کی نگرانی اور آپ کو رپورٹ",
+  "Product Researcher":"مارکیٹ اور پروڈکٹ کی تحقیق",
+  "Marketing Manager":"اشتہارات اور مواد",
+  "Order Manager":"آرڈرز کا ریکارڈ اور حالت",
+  "Accountant":"حساب، منافع اور رپورٹس",
+  "Customer Support":"گاہکوں کے جوابات اور شکایات"
+};
+const TS = {queued:["قطار میں",""], running:["جاری",""], waiting_approval:["منظوری کا انتظار","warn"], done:["مکمل","ok"], failed:["ناکام","bad"]};
+const AS = {pending:["انتظار میں","warn"], approved:["منظور","ok"], rejected:["مسترد","bad"]};
+const AT = {send_message:"پیغام بھیجنا", place_order:"آرڈر دینا", spend_money:"رقم خرچ کرنا", other:"دیگر"};
+
+let tab = "emp", D = {emp:[], task:[], appr:[], note:[]}, msg = "", msgOk = false;
+
+function showLogin(){ $("app").hidden = true; $("login").hidden = false; }
+async function start(){ $("login").hidden = true; $("app").hidden = false; await load(); }
+
+async function load(){
+  const r = await Promise.all([
+    sb.from("employees").select("*"),
+    sb.from("tasks").select("*, employees(name)").order("created_at", {ascending:false}).limit(50),
+    sb.from("approvals").select("*").order("created_at", {ascending:false}).limit(50),
+    sb.from("notifications").select("*").order("created_at", {ascending:false}).limit(50)
+  ]);
+  const bad = r.find(x => x.error);
+  if (bad) { msg = "ڈیٹا نہیں آ سکا: " + bad.error.message; msgOk = false; }
+  D = {emp:r[0].data||[], task:r[1].data||[], appr:r[2].data||[], note:r[3].data||[]};
+  render();
+}
+
+function render(){
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === tab));
+  const pend = D.appr.filter(a => a.status === "pending").length;
+  $("bd").hidden = !pend; $("bd").textContent = pend;
+  const m = msg ? `<p class="${msgOk ? "ok-msg" : "err"}" role="status">${esc(msg)}</p>` : "";
+  $("view").innerHTML = m + ({emp:vEmp, task:vTask, appr:vAppr, note:vNote}[tab])();
+}
+
+function vEmp(){
+  if (!D.emp.length) return `<p class="empty">ابھی کوئی ملازم درج نہیں۔</p>`;
+  const mgr = D.emp.find(e => !e.reports_to);
+  const kids = D.emp.filter(e => e.reports_to).sort((a,b) => a.name.localeCompare(b.name));
+  const card = e => `<strong>${esc(e.name)}</strong><br><small>${esc(DUTY[e.role] || e.role)}</small>`;
+  return `<h2>آپ (مالک)</h2>` +
+    (mgr ? `<div class="mgr">${card(mgr)}</div>` : "") +
+    `<div class="kids">${kids.map(k => `<div class="kid">${card(k)}</div>`).join("")}</div>`;
+}
+
+function vTask(){
+  const opts = `<option value="">کوئی خاص ملازم نہیں</option>` + D.emp.map(e => `<option value="${esc(e.id)}">${esc(e.name)}</option>`).join("");
+  const list = D.task.length ? D.task.map(t => {
+    const s = TS[t.status] || [t.status, ""];
+    return `<div class="row"><strong>${esc(t.title)}</strong> <span class="tag ${s[1]}">${s[0]}</span><br>
+      <small>${esc(t.employees?.name || "کسی کو نہیں دیا")} · ${fmt(t.created_at)}</small>
+      ${t.failure_reason ? `<br><small class="err">وجہ: ${esc(t.failure_reason)}</small>` : ""}</div>`;
+  }).join("") : `<p class="empty">ابھی کوئی کام نہیں۔ اوپر سے پہلا کام شامل کریں۔</p>`;
+  return `<h2>نیا کام</h2>
+    <label for="tt">کام کا عنوان</label><input id="tt">
+    <label for="te">کس ملازم کو</label><select id="te">${opts}</select>
+    <label for="td">تفصیل</label><textarea id="td" rows="2"></textarea>
+    <div class="acts"><button data-a="addtask">کام شامل کریں</button></div>
+    <h2>تمام کام</h2>${list}`;
+}
+
+function vAppr(){
+  if (!D.appr.length) return `<p class="empty">کوئی منظوری زیر التوا نہیں۔ پیسے، آرڈر یا پیغام کا ہر کام یہاں آپ کے فیصلے کا انتظار کرے گا۔</p>`;
+  return `<h2>منظوریاں</h2>` + D.appr.map(a => {
+    const s = AS[a.status] || [a.status, ""];
+    return `<div class="row"><strong>${esc(AT[a.action_type] || a.action_type)}</strong> <span class="tag ${s[1]}">${s[0]}</span><br>
+      ${esc(a.description)}${a.draft ? `<br><small>مسودہ: ${esc(a.draft)}</small>` : ""}<br><small>${fmt(a.created_at)}</small>
+      ${a.status === "pending" ? `<div class="acts"><button data-a="approved" data-id="${esc(a.id)}">منظور کریں</button><button class="no" data-a="rejected" data-id="${esc(a.id)}">مسترد کریں</button></div>` : ""}</div>`;
+  }).join("");
+}
+
+function vNote(){
+  if (!D.note.length) return `<p class="empty">کوئی اطلاع نہیں۔</p>`;
+  return `<h2>اطلاعات</h2>` + D.note.map(n => `<div class="row"><strong>${esc(n.title)}</strong>${n.is_read ? "" : ` <span class="tag warn">نئی</span>`}<br>${esc(n.body || "")}<br><small>${fmt(n.created_at)}</small>
+    ${n.is_read ? "" : `<div class="acts"><button class="ghost" data-a="read" data-id="${esc(n.id)}">پڑھ لی</button></div>`}</div>`).join("");
+}
+
+async function addTask(){
+  const title = $("tt").value.trim();
+  if (!title) { msg = "کام کا عنوان لکھیں۔"; msgOk = false; return render(); }
+  const row = {title, details: $("td").value.trim() || null, employee_id: $("te").value || null};
+  const {error} = await sb.from("tasks").insert(row);
+  if (error) { msg = "کام درج نہیں ہوا: " + error.message; msgOk = false; return render(); }
+  msg = "کام فہرست میں درج ہو گیا۔ اسے ابھی کوئی AI نہیں چلائے گا۔"; msgOk = true;
+  await load();
+}
+
+async function decide(id, status){
+  const {error} = await sb.from("approvals").update({status, decided_at: new Date().toISOString()}).eq("id", id);
+  msg = error ? "فیصلہ درج نہیں ہوا: " + error.message : "آپ کا فیصلہ درج ہو گیا۔ اس سے کوئی کام خود نہیں چلا۔";
+  msgOk = !error;
+  await load();
+}
+
+async function markRead(id){
+  const {error} = await sb.from("notifications").update({is_read:true}).eq("id", id);
+  msg = error ? "نشان نہیں لگ سکا: " + error.message : ""; msgOk = false;
+  await load();
+}
+
+$("view").addEventListener("click", e => {
+  const b = e.target.closest("button[data-a]"); if (!b) return;
+  const a = b.dataset.a;
+  if (a === "addtask") addTask();
+  else if (a === "approved" || a === "rejected") decide(b.dataset.id, a);
+  else if (a === "read") markRead(b.dataset.id);
+});
+$("nav").addEventListener("click", e => {
+  const b = e.target.closest("button[data-t]"); if (!b) return;
+  tab = b.dataset.t; msg = ""; render();
+});
+$("go").addEventListener("click", async () => {
+  $("lerr").textContent = "";
+  const {error} = await sb.auth.signInWithPassword({email: $("em").value.trim(), password: $("pw").value});
+  if (error) { $("lerr").textContent = "لاگ اِن نہیں ہوا۔ ای میل اور پاس ورڈ دوبارہ دیکھیں۔"; return; }
+  $("pw").value = ""; start();
+});
+$("out").addEventListener("click", async () => { await sb.auth.signOut(); showLogin(); });
+
+sb.auth.getSession().then(({data}) => data.session ? start() : showLogin());
+</script>
+</body>
+  </html>
